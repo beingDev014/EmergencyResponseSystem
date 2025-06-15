@@ -1,0 +1,294 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Traffic Police Dashboard</title>
+    <link href="style.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=home" />
+</head>
+<body>
+    <header class="header">
+            <div class="container">
+                <div class="logo">
+                    <img src="logo.png">
+                    <h1>RakshPath Police Dashboard&nbsp;<i class="fa-solid fa-building-shield"></i></h1>
+                </div>
+            <nav class="nav">
+                <a href="traffic-dashboard.html">Home</a>
+                <a href="#" class="btn btn-logout" onclick="logout()">Logout</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="dashboard-main">
+        <div class="container">
+            <div class="dashboard-grid">
+                <div class="sidebar">
+                    <div class="officer-status">
+                        <h3>Officer Status</h3>
+                        <div class="duty-controls">
+                            <div class="status-indicator" id="duty-status">On Duty</div>
+                            <div class="duty-buttons">
+                                <button class="btn btn-primary btn-duty" id="on-duty-btn" onclick="setDutyStatus('on')">On Duty</button>
+                                <button class="btn btn-secondary btn-duty" id="off-duty-btn" onclick="setDutyStatus('off')">Off Duty</button>
+                            </div>
+                        </div>
+                        <div class="officer-info">
+                            <p><strong>Badge:</strong> <span id="officer-badge">TP-2024-15</span></p>
+                            <p><strong>Officer:</strong> <span id="officer-name">Mike Wilson</span></p>
+                            <p><strong>Zone:</strong> <span id="officer-zone">Central District</span></p>
+                            <p><strong>Shift:</strong> <span id="officer-shift">8AM - 8PM</span></p>
+                            <p><strong>Last Update:</strong> <span id="last-update">Just now</span></p>
+                        </div>
+                    </div>
+                    
+                    <div class="quick-actions">
+                        <h3>Quick Actions</h3>
+                        <button class="btn btn-emergency btn-full" onclick="emergencyResponse()">Emergency Response</button>
+                    </div>
+                </div>
+
+                <div class="main-content">
+                    <div class="clearance-requests">
+                        <h3>Traffic Clearance Requests</h3>
+                        <div id="clearance-requests-container">
+                            <div class="request-card urgent">
+                                <div class="request-header">
+                                    <span class="request-id">CLR-001</span>
+                                    <span class="priority high">URGENT</span>
+                                </div>
+                                <div class="request-details">
+                                    <p><strong>Ambulance:</strong> AMB-001</p>
+                                    <p><strong>Route:</strong> Main St → Hospital Ave</p>
+                                    <p><strong>ETA to Junction:</strong> <span class="eta">3 minutes</span></p>
+                                    <p><strong>Patient:</strong> Critical cardiac case</p>
+                                    <p><strong>Status:</strong> <span class="request-status pending">Pending</span></p>
+                                </div>
+                                <div class="request-actions">
+                                    <button class="btn btn-emergency" onclick="clearRoute('CLR-001')">Mark Complete</button>
+                                    <button class="btn btn-secondary" onclick="contactAmbulance('AMB-001')">Contact Ambulance</button>
+                                    <button class="btn btn-tertiary" onclick="viewDetails('CLR-001')">View Details</button>
+                                </div>
+                            </div>
+
+                            <div class="request-card">
+                            
+
+                        </div>
+                    </div>
+
+                    <div class="traffic-map">
+                        <h3>Traffic Control Map</h3>
+                        <div class="map-placeholder">
+                            <div class="map-icon">🗺️</div>
+                            <p>Live Traffic & Ambulance Tracking</p>
+                            <p>Central District Coverage</p>
+                            <div class="map-controls">
+                                <button class="btn btn-secondary" onclick="refreshMap()">Refresh Map</button>
+                                <button class="btn btn-primary" onclick="toggleTrafficView()">Toggle Traffic View</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modals -->
+    <div id="emergency-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('emergency-modal')">&times;</span>
+            <h3>Emergency Response</h3>
+            <form onsubmit="submitEmergencyResponse(event)">
+                <div class="form-group">
+                    <label>Emergency Type:</label>
+                    <select name="emergency-type" required>
+                        <option value="">Select Type</option>
+                        <option value="ambulance">Ambulance Clearance</option>
+                        <option value="accident">Traffic Accident</option>
+                        <option value="fire">Fire Department</option>
+                        <option value="police">Police Emergency</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Location:</label>
+                    <input type="text" name="location" placeholder="Enter intersection or address" required>
+                </div>
+                <div class="form-group">
+                    <label>Description:</label>
+                    <textarea name="description" placeholder="Brief description of emergency" rows="3"></textarea>
+                </div>
+                <button type="submit" class="btn btn-emergency btn-full">Submit Emergency Response</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Officer duty status management
+        let dutyStatus = 'on'; // 'on', 'off'
+        let lastUpdateTime = new Date();
+
+        function setDutyStatus(status) {
+            dutyStatus = status;
+            const statusElement = document.getElementById('duty-status');
+            const onDutyBtn = document.getElementById('on-duty-btn');
+            const offDutyBtn = document.getElementById('off-duty-btn');
+            
+            if (status === 'on') {
+                statusElement.textContent = 'On Duty';
+                statusElement.className = 'status-indicator available';
+                onDutyBtn.classList.add('active');
+                offDutyBtn.classList.remove('active');
+                showNotification('You are now ON DUTY', 'success');
+            } else {
+                statusElement.textContent = 'Off Duty';
+                statusElement.className = 'status-indicator offline';
+                onDutyBtn.classList.remove('active');
+                offDutyBtn.classList.add('active');
+                showNotification('You are now OFF DUTY', 'warning');
+            }
+            
+            updateLastUpdateTime();
+            
+            // Update server (placeholder)
+            console.log(`Duty status updated to: ${status}`);
+        }
+
+        function updateLastUpdateTime() {
+            lastUpdateTime = new Date();
+            document.getElementById('last-update').textContent = 'Just now';
+        }
+
+        function clearRoute(requestId) {
+            if (dutyStatus === 'off') {
+                showNotification('Cannot clear route while off duty!', 'error');
+                return;
+            }
+            
+            showNotification(`Route cleared for ${requestId}`, 'success');
+            
+            // Update request status
+            const requestCard = document.querySelector(`[class*="request-card"]:has(.request-id:contains("${requestId}"))`);
+            if (requestCard) {
+                const statusElement = requestCard.querySelector('.request-status');
+                if (statusElement) {
+                    statusElement.textContent = 'Cleared';
+                    statusElement.className = 'request-status completed';
+                }
+            }
+            
+            // Update statistics
+            const clearancesCount = document.getElementById('clearances-count');
+            clearancesCount.textContent = parseInt(clearancesCount.textContent) + 1;
+            
+            updateLastUpdateTime();
+        }
+
+        function contactAmbulance(ambulanceId) {
+            showNotification(`Contacting ${ambulanceId}...`, 'info');
+            updateLastUpdateTime();
+        }
+
+        function viewDetails(requestId) {
+            showNotification(`Viewing details for ${requestId}`, 'info');
+        }
+
+        function emergencyResponse() {
+            if (dutyStatus === 'off') {
+                showNotification('Cannot respond to emergencies while off duty!', 'error');
+                return;
+            }
+            
+            document.getElementById('emergency-modal').style.display = 'flex';
+        }
+
+        function clearTrafficSignal() {
+            if (dutyStatus === 'off') {
+                showNotification('Cannot control traffic signals while off duty!', 'error');
+                return;
+            }
+            
+            showNotification('Traffic signal cleared', 'success');
+            updateLastUpdateTime();
+        }
+
+        function updateLocation() {
+            showNotification('Location updated', 'success');
+            updateLastUpdateTime();
+        }
+
+        function requestBackup() {
+            if (dutyStatus === 'off') {
+                showNotification('Cannot request backup while off duty!', 'error');
+                return;
+            }
+            
+            showNotification('Backup requested', 'warning');
+            updateLastUpdateTime();
+        }
+
+        function refreshMap() {
+            showNotification('Map refreshed', 'info');
+        }
+
+        function toggleTrafficView() {
+            showNotification('Traffic view toggled', 'info');
+        }
+
+        function submitEmergencyResponse(event) {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+            const emergencyType = formData.get('emergency-type');
+            const location = formData.get('location');
+            
+            showNotification(`Emergency response submitted for ${emergencyType} at ${location}`, 'success');
+            closeModal('emergency-modal');
+            event.target.reset();
+            updateLastUpdateTime();
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                window.location.href = 'index.html';
+            }
+        }
+
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+
+        // Update time display every minute
+        setInterval(() => {
+            const now = new Date();
+            const diffMinutes = Math.floor((now - lastUpdateTime) / 60000);
+            
+            if (diffMinutes === 0) {
+                document.getElementById('last-update').textContent = 'Just now';
+            } else if (diffMinutes === 1) {
+                document.getElementById('last-update').textContent = '1 minute ago';
+            } else {
+                document.getElementById('last-update').textContent = `${diffMinutes} minutes ago`;
+            }
+        }, 60000);
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            setDutyStatus('on'); // Default to on duty
+        });
+    </script>
+</body>
+</html>

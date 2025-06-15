@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hospital-dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=home" />
+</head>
+<body>
+    <header class="header">
+            <div class="container">
+                <div class="logo">
+                    <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo">
+                    <h1>RakshPath Hospital Dashboard&nbsp;<i class="fa-solid fa-hospital-user"></i></h1>
+                </div>
+            <nav class="nav">
+                <a href="hospital-dashboard.html">Home</a>
+                <a href="#" onclick="showTab('register'); showRegTab('patient')">Patients</a>
+                <a href="#" class="btn btn-logout" onclick="logout()">Logout</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="dashboard-main">
+        <div class="container">
+            <div class="dashboard-grid">
+                <div class="sidebar">
+                    <div class="hospital-status">
+                        <h3>Hospital Capacity</h3>
+                        <div class="capacity-info">
+                            <div class="capacity-item">
+                                <span>Emergency Beds</span>
+                                <span class="capacity-count" id="emergency-beds">8/12</span>
+                            </div>
+                            <div class="capacity-item">
+                                <span>ICU Beds</span>
+                                <span class="capacity-count" id="icu-beds">15/20</span>
+                            </div>
+                            <div class="capacity-item">
+                                <span>Operating Rooms</span>
+                                <span class="capacity-count" id="operating-rooms">3/6</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="quick-actions">
+                        <h3>Quick Actions</h3>
+                        <button class="btn btn-danger" onclick="showTab('emergency'); showRegTab('emergency')">Create Emergency</button>
+                        <button class="btn btn-primary" onclick="showTab('register'); showRegTab('patient')">Register Patient</button>
+                        <button class="btn btn-secondary" onclick="showTab('register'); showRegTab('ambulance')">Register Ambulance</button>
+                        <button class="btn btn-tertiary" onclick="showTab('capacity'); showRegTab('capacity')">Update Capacity</button>
+                    </div>
+
+                    
+                </div>
+
+                <div class="main-content">
+                    <div class="dashboard-tabs">
+                        <button class="tab-btn active" onclick="showTab('capacity')">Update Capacity</button>
+                        <button class="tab-btn" onclick="showTab('tracking')">Ambulance Tracking</button>
+                        <button class="tab-btn" onclick="showTab('register')">Registration</button>
+                        <button class="tab-btn" onclick="showTab('emergency')">Emergency Center</button>
+                    </div>
+
+                    <!-- Update Capacity Tab -->
+                    <div id="capacity" class="tab-content active">
+                        <div class="capacity-management">
+                            <h3>Hospital Capacity Management</h3>
+                            
+                            <div class="capacity-overview">
+                                <div class="capacity-grid">
+                                    <div class="capacity-overview-card">
+                                        <h4>Emergency Department</h4>
+                                        <div class="capacity-display">
+                                            <span class="capacity-numbers" id="emergency-display">8/12</span>
+                                            <span class="capacity-percentage" id="emergency-percentage">67%</span>
+                                        </div>
+                                        <div class="capacity-bar">
+                                            <div class="capacity-fill" id="emergency-fill" style="width: 67%"></div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="capacity-overview-card">
+                                        <h4>ICU Department</h4>
+                                        <div class="capacity-display">
+                                            <span class="capacity-numbers" id="icu-display">15/20</span>
+                                            <span class="capacity-percentage" id="icu-percentage">75%</span>
+                                        </div>
+                                        <div class="capacity-bar">
+                                            <div class="capacity-fill" id="icu-fill" style="width: 75%"></div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="capacity-overview-card">
+                                        <h4>Operating Rooms</h4>
+                                        <div class="capacity-display">
+                                            <span class="capacity-numbers" id="or-display">3/6</span>
+                                            <span class="capacity-percentage" id="or-percentage">50%</span>
+                                        </div>
+                                        <div class="capacity-bar">
+                                            <div class="capacity-fill" id="or-fill" style="width: 50%"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <form>
+                            <div>
+                                <form>
+                                    <div class="form-group">
+                                        <label for="emergency-total">Total Emergency beds</label>
+                                        <input id="emergency-total" type="number" name="total_emergency_beds">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="emergency-available">Available Emergency beds</label>
+                                        <input id="emergency-available" type="number" name="available_emergency_beds">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="icu-total">Total ICU beds</label>
+                                        <input id="icu-total" type="number" name="icu_total_beds">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="icu-available">Available ICU beds</label>
+                                        <input id="icu-avaialable" type="number" name="icu_available_beds">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="opr-total">Total Operating rooms</label>
+                                        <input id="opr-total" type="number" name="operating_rooms_total">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="opr-available">Available Operating rooms</label>
+                                        <input id="opr-available" type="number" name="operating_rooms_available">
+                                    </div>
+                                </form>
+                            </div>
+                            <button class="btn btn-primary">Update</button>
+                        </form>
+                    </div>
+
+
+                    <!-- Ambulance Tracking Tab -->
+                    <div id="tracking" class="tab-content">
+                        <div class="ambulance-tracking">
+                            <h3>Real-time Ambulance Tracking</h3>
+                            <div class="tracking-controls">
+                                <select class="form-control" id="ambulance-select" onchange="selectAmbulanceForTracking()">
+                                    <option value="">Select Ambulance to Track</option>
+                                    <option value="AMB-001">AMB-001 - En Route</option>
+                                    <option value="AMB-002">AMB-002 - Available</option>
+                                    <option value="AMB-003">AMB-003 - En Route</option>
+                                    <option value="AMB-004">AMB-004 - Maintenance</option>
+                                </select>
+                                <button class="btn btn-primary" onclick="trackSelectedAmbulance()">Track Selected</button>
+                            </div>
+                            <div class="tracking-map">
+                                <div class="map-placeholder" id="tracking-map-display">
+                                    <div class="map-icon">🗺️</div>
+                                    <p>Live Ambulance Tracking Map</p>
+                                    <p>Select an ambulance to track its real-time location</p>
+                                    <div class="tracking-info" id="tracking-info">
+                                        <p><strong>AMB-001:</strong> Highway Junction → Hospital (8 min)</p>
+                                        <p><strong>AMB-003:</strong> Downtown → Hospital (15 min)</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                        </div>
+                    </div>
+
+                    <!-- Registration Tab -->
+                    <div id="register" class="tab-content">
+                        <div class="registration-section">
+                            <div class="registration-tabs">
+                                <button class="reg-tab-btn active" onclick="showRegTab('patient')">Patient Registration</button>
+                                <button class="reg-tab-btn" onclick="showRegTab('ambulance')">Ambulance Registration</button>
+                            </div>
+
+                            <!-- Patient Registration -->
+                            <div id="patient-reg" class="reg-content active">
+                                <h3>Emergency Patient Registration</h3>
+                                <form class="registration-form" id="patient-registration-form" onsubmit="registerPatient(event)">
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label>Full Name *</label>
+                                            <input type="text" id="patient-name" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Age *</label>
+                                            <input type="number" id="patient-age" required>
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label>Gender *</label>
+                                            <select id="patient-gender" required>
+                                                <option value="">Select Gender</option>
+                                                <option value="male">Male</option>
+                                                <option value="female">Female</option>
+                                                <option value="other">Other</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Blood Type</label>
+                                            <select id="patient-blood-type">
+                                                <option value="">Select Blood Type</option>
+                                                <option value="A+">A+</option>
+                                                <option value="A-">A-</option>
+                                                <option value="B+">B+</option>
+                                                <option value="B-">B-</option>
+                                                <option value="AB+">AB+</option>
+                                                <option value="AB-">AB-</option>
+                                                <option value="O+">O+</option>
+                                                <option value="O-">O-</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Emergency Condition *</label>
+                                        <select id="patient-condition" required>
+                                            <option value="">Select Condition</option>
+                                            <option value="cardiac">Cardiac Emergency</option>
+                                            <option value="trauma">Trauma/Accident</option>
+                                            <option value="respiratory">Respiratory Emergency</option>
+                                            <option value="neurological">Neurological Emergency</option>
+                                            <option value="other">Other</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Condition Details</label>
+                                        <textarea id="patient-details" rows="3" placeholder="Describe the patient's condition and symptoms"></textarea>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Emergency Contact Name</label>
+                                        <input type="text" id="emergency-contact-name">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Emergency Contact Phone</label>
+                                        <input type="tel" id="emergency-contact-phone">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Medical History/Allergies</label>
+                                        <textarea id="medical-history" rows="2" placeholder="Known medical conditions, allergies, medications"></textarea>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary btn-full">Register Patient</button>
+                                </form>
+                            </div>
+
+                            <!-- Ambulance Registration -->
+                            <div id="ambulance-reg" class="reg-content">
+                                <h3>Ambulance Registration</h3>
+                                <form class="registration-form" id="ambulance-registration-form" onsubmit="registerAmbulance(event)">
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label>Ambulance ID *</label>
+                                            <input type="text" id="ambulance-id" placeholder="e.g., AMB-005" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Vehicle Type *</label>
+                                            <select id="vehicle-type" required>
+                                                <option value="">Select Type</option>
+                                                <option value="basic">Basic Life Support</option>
+                                                <option value="advanced">Advanced Life Support</option>
+                                                <option value="critical">Critical Care Transport</option>
+                                                <option value="rescue">Emergency Rescue</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label>License Plate</label>
+                                            <input type="text" id="license-plate">
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Station/Base</label>
+                                            <input type="text" id="station-base" placeholder="e.g., Central Station">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Driver Name *</label>
+                                        <input type="text" id="driver-name" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Driver License No.</label>
+                                        <input type="text" id="driver-license">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Paramedic/EMT Name</label>
+                                        <input type="text" id="paramedic-name">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Paramedic Certification</label>
+                                        <input type="text" id="paramedic-cert">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Equipment Level</label>
+                                        <select id="equipment-level">
+                                            <option value="">Select Equipment Level</option>
+                                            <option value="basic">Basic Equipment</option>
+                                            <option value="advanced">Advanced Equipment</option>
+                                            <option value="full">Full ICU Equipment</option>
+                                        </select>
+                                    </div>
+                                    <button type="submit" class="btn btn-secondary btn-full">Register Ambulance</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Emergency Center Tab -->
+                    <div id="emergency" class="tab-content">
+                        <div class="registration-section">
+                            <div class="crt-emg">
+                                <h3>Create Emergency</h3>
+                                <form class="registration-form" id="create-emergency-form" onsubmit="createEmergencyRequest(event)">
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label>Emergency Type *</label>
+                                            <select id="emergency-type" required>
+                                                <option value="">Select Type</option>
+                                                <option value="medical">Medical Emergency</option>
+                                                <option value="accident">Traffic Accident</option>
+                                                <option value="cardiac">Cardiac Emergency</option>
+                                                <option value="trauma">Trauma</option>
+                                                <option value="respiratory">Respiratory Emergency</option>
+                                                <option value="other">Other</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Priority Level *</label>
+                                            <select id="emergency-priority" required>
+                                                <option value="">Select Priority</option>
+                                                <option value="critical">Critical</option>
+                                                <option value="high">High</option>
+                                                <option value="medium">Medium</option>
+                                                <option value="low">Low</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="pickup-location">Pickup Location *</label>
+                                        <input id="pickup-location" type="text" id="pickup-location" placeholder="Enter pickup address" required>
+                                        <button type="button" class="btn btn-tertiary" onclick="getCurrentLocation('pickup')">Use Current Location</button>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="drop-location-btn">Drop Location *</label>
+                                        <input type="text" id="drop-location-display" placeholder="Select drop address"required>
+                                        <button type="button" class="btn btn-tertiary" onclick="getCurrentLocation('pickup')">Use Current Location</button>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Destination Hospital *</label>
+                                        <select id="destination-hospital" required>
+                                            <option value="">Select Hospital</option>
+                                            <option value="current">Current Hospital</option>
+                                            <option value="city-general">City General Hospital</option>
+                                            <option value="mercy-hospital">Mercy Hospital</option>
+                                            <option value="st-marys">St. Mary's Medical Center</option>
+                                            <option value="other">other</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>Available Ambulances *</label>
+                                        <select id="assign-ambulance" required>
+                                            <option value="">Select Ambulance</option>
+                                            <option value="AMB-002">AMB-002 - Available (Driver: Mike Johnson)</option>
+                                            <option value="AMB-004">AMB-004 - Available (Driver: Sarah Wilson)</option>
+                                            <option value="AMB-005">AMB-005 - Available (Driver: Tom Anderson)</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label>Patient Name</label>
+                                            <input type="text" id="patient-name-emergency" placeholder="Patient name (if known)">
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Patient Age</label>
+                                            <input type="number" id="patient-age-emergency" placeholder="Age">
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>Emergency Description</label>
+                                        <textarea id="emergency-description" rows="3" placeholder="Describe the emergency situation"></textarea>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>Contact Number *</label>
+                                        <input type="tel" id="contact-number" placeholder="Emergency contact number" required>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>Special Instructions</label>
+                                        <textarea id="special-instructions" rows="2" placeholder="Any special instructions for the ambulance crew"></textarea>
+                                    </div>
+
+                                    <button type="submit" class="btn btn-emergency btn-full">Create Emergency Request</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+        
+        
+    </main>
+
+
+
+    <script>
+        // Global variables for hospital data
+        let hospitalData = {
+            capacity: {
+                emergency: { available: 8, total: 12 },
+                icu: { available: 15, total: 20 },
+                operatingRooms: { available: 3, total: 6 }
+            },
+            ambulances: [],
+            patients: [],
+            alerts: [],
+            stats: {
+                activeEmergencies: 3,
+                enrouteAmbulances: 2,
+                availableBeds: 8,
+                staffOnDuty: 12
+            }
+        };
+
+        // Tab switching functions
+        function showTab(tabName) {
+            const tabContents = document.querySelectorAll('.tab-content');
+            tabContents.forEach(content => content.classList.remove('active'));
+            
+            const tabBtns = document.querySelectorAll('.tab-btn');
+            tabBtns.forEach(btn => btn.classList.remove('active'));
+            
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+            
+            // Update capacity display when capacity tab is opened
+            if (tabName === 'capacity') {
+                updateCapacityDisplay();
+            }
+        }
+
+        function showRegTab(tabName) {
+            const regContents = document.querySelectorAll('.reg-content');
+            regContents.forEach(content => content.classList.remove('active'));
+            
+            const regTabBtns = document.querySelectorAll('.reg-tab-btn');
+            regTabBtns.forEach(btn => btn.classList.remove('active'));
+            
+            document.getElementById(tabName + '-reg').classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // Capacity management functions
+        function updateCapacity() {
+            document.getElementById('capacity-modal').style.display = 'block';
+            
+            // Pre-populate current values
+            document.getElementById('emergency-available').value = hospitalData.capacity.emergency.available;
+            document.getElementById('emergency-total').value = hospitalData.capacity.emergency.total;
+            document.getElementById('icu-available').value = hospitalData.capacity.icu.available;
+            document.getElementById('icu-total').value = hospitalData.capacity.icu.total;
+            document.getElementById('or-available').value = hospitalData.capacity.operatingRooms.available;
+            document.getElementById('or-total').value = hospitalData.capacity.operatingRooms.total;
+        }
+
+        function closeCapacityModal() {
+            document.getElementById('capacity-modal').style.display = 'none';
+        }
+
+        function saveCapacityUpdate(event) {
+            event.preventDefault();
+            
+            const emergencyAvailable = parseInt(document.getElementById('emergency-available').value);
+            const emergencyTotal = parseInt(document.getElementById('emergency-total').value);
+            const icuAvailable = parseInt(document.getElementById('icu-available').value);
+            const icuTotal = parseInt(document.getElementById('icu-total').value);
+            const orAvailable = parseInt(document.getElementById('or-available').value);
+            const orTotal = parseInt(document.getElementById('or-total').value);
+
+            // Update hospital data
+            hospitalData.capacity.emergency = { available: emergencyAvailable, total: emergencyTotal };
+            hospitalData.capacity.icu = { available: icuAvailable, total: icuTotal };
+            hospitalData.capacity.operatingRooms = { available: orAvailable, total: orTotal };
+
+            // Update display
+            document.getElementById('emergency-beds').textContent = `${emergencyAvailable}/${emergencyTotal}`;
+            document.getElementById('icu-beds').textContent = `${icuAvailable}/${icuTotal}`;
+            document.getElementById('operating-rooms').textContent = `${orAvailable}/${orTotal}`;
+            
+            // Update available beds stat
+            const totalAvailable = emergencyAvailable + icuAvailable + orAvailable;
+            document.getElementById('available-beds').textContent = totalAvailable;
+            hospitalData.stats.availableBeds = totalAvailable;
+
+            closeCapacityModal();
+            showNotification('Hospital capacity updated successfully!', 'success');
+            
+            // TODO: Save to database when connected
+            // saveToDatabase('capacity', hospitalData.capacity);
+        }
+
+        // Patient registration
+        function registerPatient(event) {
+            event.preventDefault();
+            
+            const patientData = {
+                id: 'PAT-' + Date.now(),
+                name: document.getElementById('patient-name').value,
+                age: document.getElementById('patient-age').value,
+                gender: document.getElementById('patient-gender').value,
+                bloodType: document.getElementById('patient-blood-type').value,
+                condition: document.getElementById('patient-condition').value,
+                details: document.getElementById('patient-details').value,
+                emergencyContactName: document.getElementById('emergency-contact-name').value,
+                emergencyContactPhone: document.getElementById('emergency-contact-phone').value,
+                medicalHistory: document.getElementById('medical-history').value,
+                registrationTime: new Date().toISOString(),
+                status: 'registered'
+            };
+
+            hospitalData.patients.push(patientData);
+            document.getElementById('patient-registration-form').reset();
+            showNotification(`Patient ${patientData.name} registered successfully!`, 'success');
+            
+            // TODO: Save to database when connected
+            // saveToDatabase('patients', patientData);
+        }
+
+        // Ambulance registration
+        function registerAmbulance(event) {
+            event.preventDefault();
+            
+            const ambulanceData = {
+                id: document.getElementById('ambulance-id').value,
+                vehicleType: document.getElementById('vehicle-type').value,
+                licensePlate: document.getElementById('license-plate').value,
+                stationBase: document.getElementById('station-base').value,
+                driverName: document.getElementById('driver-name').value,
+                driverLicense: document.getElementById('driver-license').value,
+                paramedicName: document.getElementById('paramedic-name').value,
+                paramedicCert: document.getElementById('paramedic-cert').value,
+                equipmentLevel: document.getElementById('equipment-level').value,
+                registrationTime: new Date().toISOString(),
+                status: 'available'
+            };
+
+            hospitalData.ambulances.push(ambulanceData);
+            document.getElementById('ambulance-registration-form').reset();
+            showNotification(`Ambulance ${ambulanceData.id} registered successfully!`, 'success');
+            
+            // Add to tracking dropdown
+            const select = document.getElementById('ambulance-select');
+            const option = document.createElement('option');
+            option.value = ambulanceData.id;
+            option.textContent = `${ambulanceData.id} - Available`;
+            select.appendChild(option);
+            
+            // TODO: Save to database when connected
+            // saveToDatabase('ambulances', ambulanceData);
+        }
+
+        
+       
+
+        
+
+        
+        
+
+       
+
+        function getTimeAgo(date) {
+            const now = new Date();
+            const diffInMinutes = Math.floor((now - date) / 60000);
+            
+            if (diffInMinutes < 1) return 'Just now';
+            if (diffInMinutes < 60) return `${diffInMinutes} min ago`;
+            if (diffInMinutes < 1440) return `${Math.floor(diffInMinutes / 60)} hr ago`;
+            return `${Math.floor(diffInMinutes / 1440)} days ago`;
+        }
+
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+            
+            // Add notification styles if not exist
+            if (!document.querySelector('style[data-notifications]')) {
+                const style = document.createElement('style');
+                style.setAttribute('data-notifications', 'true');
+                style.textContent = `
+                    .notification {
+                        position: fixed;
+                        top: 20px;
+                        right: 20px;
+                        padding: 1rem 1.5rem;
+                        border-radius: 8px;
+                        color: white;
+                        font-weight: 600;
+                        z-index: 1000;
+                        animation: slideIn 0.3s ease;
+                    }
+                    .notification.success { background: #10b981; }
+                    .notification.error { background: #dc2626; }
+                    .notification.warning { background: #f59e0b; }
+                    .notification.info { background: #3b82f6; }
+                    .notification.emergency { background: #dc2626; animation: pulse 1s infinite; }
+                    @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
+                `;
+                document.head.appendChild(style);
+            }
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 5000);
+        }
+
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                window.location.href = 'login.html';
+            }
+        }
+
+        // Database functions (to be implemented when database is connected)
+        async function saveToDatabase(table, data) {
+            try {
+                // TODO: Implement database save
+                console.log(`Saving to ${table}:`, data);
+                // const response = await fetch('/api/save', {
+                //     method: 'POST',
+                //     headers: { 'Content-Type': 'application/json' },
+                //     body: JSON.stringify({ table, data })
+                // });
+                // return response.json();
+            } catch (error) {
+                console.error('Database save error:', error);
+                showNotification('Failed to save to database', 'error');
+            }
+        }
+
+        async function loadFromDatabase(table) {
+            try {
+                // TODO: Implement database load
+                console.log(`Loading from ${table}`);
+                // const response = await fetch(`/api/load/${table}`);
+                // return response.json();
+            } catch (error) {
+                console.error('Database load error:', error);
+                showNotification('Failed to load from database', 'error');
+            }
+        }
+
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load initial data when database is connected
+            // loadFromDatabase('capacity').then(data => {
+            //     if (data) hospitalData.capacity = data;
+            //     updateCapacityDisplay();
+            // });
+            
+            showNotification('Hospital Dashboard loaded successfully', 'success');
+        });
+
+        // New capacity management functions
+        function openQuickCapacityUpdate() {
+            updateCapacity();
+        }
+
+        function updateCapacityDisplay() {
+            const emergency = hospitalData.capacity.emergency;
+            const icu = hospitalData.capacity.icu;
+            const or = hospitalData.capacity.operatingRooms;
+
+            // Update display numbers
+            document.getElementById('emergency-display').textContent = `${emergency.available}/${emergency.total}`;
+            document.getElementById('icu-display').textContent = `${icu.available}/${icu.total}`;
+            document.getElementById('or-display').textContent = `${or.available}/${or.total}`;
+
+            // Calculate and update percentages
+            const emergencyPercent = Math.round((emergency.total - emergency.available) / emergency.total * 100);
+            const icuPercent = Math.round((icu.total - icu.available) / icu.total * 100);
+            const orPercent = Math.round((or.total - or.available) / or.total * 100);
+
+            document.getElementById('emergency-percentage').textContent = `${emergencyPercent}%`;
+            document.getElementById('icu-percentage').textContent = `${icuPercent}%`;
+            document.getElementById('or-percentage').textContent = `${orPercent}%`;
+
+            // Update capacity bars
+            document.getElementById('emergency-fill').style.width = `${emergencyPercent}%`;
+            document.getElementById('icu-fill').style.width = `${icuPercent}%`;
+            document.getElementById('or-fill').style.width = `${orPercent}%`;
+        }
+
+        // Create Emergency functions
+        function openCreateEmergency() {
+            document.getElementById('create-emergency-modal').style.display = 'block';
+        }
+
+        function closeCreateEmergencyModal() {
+            document.getElementById('create-emergency-modal').style.display = 'none';
+        }
+
+        function createEmergencyRequest(event) {
+            event.preventDefault();
+            
+            const emergencyData = {
+                id: 'EMR-' + Date.now(),
+                type: document.getElementById('emergency-type').value,
+                priority: document.getElementById('emergency-priority').value,
+                pickupLocation: document.getElementById('pickup-location').value,
+                destinationHospital: document.getElementById('destination-hospital').value,
+                assignedAmbulance: document.getElementById('assign-ambulance').value,
+                patientName: document.getElementById('patient-name-emergency').value,
+                patientAge: document.getElementById('patient-age-emergency').value,
+                description: document.getElementById('emergency-description').value,
+                contactNumber: document.getElementById('contact-number').value,
+                specialInstructions: document.getElementById('special-instructions').value,
+                createdTime: new Date().toISOString(),
+                status: 'pending'
+            };
+
+            // Add to emergency requests
+            if (!hospitalData.emergencyRequests) {
+                hospitalData.emergencyRequests = [];
+            }
+            hospitalData.emergencyRequests.unshift(emergencyData);
+
+            // Update UI
+            addEmergencyRequestToList(emergencyData);
+            
+            // Clear form and close modal
+            document.getElementById('create-emergency-form').reset();
+            closeCreateEmergencyModal();
+            
+            // Show notification
+            showNotification(`Emergency request ${emergencyData.id} created successfully!`, 'success');
+            
+            // Add alert
+            addAlert('critical', `New emergency request created: ${emergencyData.type} at ${emergencyData.pickupLocation}`);
+            
+            // TODO: Save to database when connected
+            // saveToDatabase('emergencyRequests', emergencyData);
+        }
+
+
+        function editEmergency(emergencyId) {
+            showNotification(`Opening edit form for ${emergencyId}...`, 'info');
+            // TODO: Implement edit emergency functionality
+        }
+
+        function cancelEmergency(emergencyId) {
+            if (confirm(`Are you sure you want to cancel emergency ${emergencyId}?`)) {
+                showNotification(`Emergency ${emergencyId} cancelled`, 'warning');
+                updateEmergencyStatus(emergencyId, 'cancelled');
+            }
+        }
+
+        function updateEmergencyStatus(emergencyId, newStatus) {
+            const emergency = hospitalData.emergencyRequests?.find(e => e.id === emergencyId);
+            if (emergency) {
+                emergency.status = newStatus;
+                
+                // Update UI
+                const statusElement = document.querySelector(`[data-emergency-id="${emergencyId}"] .emergency-status`);
+                if (statusElement) {
+                    statusElement.textContent = newStatus;
+                    statusElement.className = `emergency-status ${newStatus}`;
+                }
+            }
+        }
+
+        function getCurrentLocation(type) {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    const lat = position.coords.latitude;
+                    const lng = position.coords.longitude;
+                    
+                    // Simulate reverse geocoding
+                    const mockAddress = `${lat.toFixed(4)}, ${lng.toFixed(4)} (GPS Location)`;
+                    document.getElementById('pickup-location').value = mockAddress;
+                    showNotification('Location obtained successfully', 'success');
+                }, function(error) {
+                    showNotification('Unable to get location', 'error');
+                });
+            } else {
+                showNotification('Geolocation not supported', 'error');
+            }
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const capacityModal = document.getElementById('capacity-modal');
+            const emergencyModal = document.getElementById('create-emergency-modal');
+            
+            if (event.target === capacityModal) {
+                closeCapacityModal();
+            }
+            if (event.target === emergencyModal) {
+                closeCreateEmergencyModal();
+            }
+        }
+    </script>
+    <script type="importmap">
+  {
+    "imports": {
+      "socket.io-client": "https://cdn.socket.io/4.8.1/socket.io.esm.min.js"
+    }
+  }
+</script>
+
+<script type="module">
+  import { io } from "socket.io-client";
+
+  const socket = io();
+</script>
+</body>
+</html>

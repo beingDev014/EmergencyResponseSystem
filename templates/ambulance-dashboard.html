@@ -1,0 +1,495 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ambulance Dashboard - ERS</title>
+    <link href="style.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+</head>
+<body>
+    <header class="header">
+            <div class="container">
+                <div class="logo">
+                    <img src="logo.png">
+                    <h1>RakshPath - Ambulance Dashboard&nbsp;<i class="fa-solid fa-truck-medical"></i></h1>
+                </div>
+                <nav class="nav">
+                    <a href="ambulance-dashboard.html"><i class="fa-solid fa-house"></i>&nbsp;Home</a>
+                    <a href="#" class="btn btn-logout" onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i>&nbsp;Logout</a>
+                </nav>
+            </div>
+    </header>
+
+    <main class="dashboard-main">
+        <div class="container">
+            <div class="dashboard-grid">
+                <!-- Left Sidebar -->
+                <div class="sidebar">
+                    <!-- Duty Status Control -->
+                    <div class="duty-status-card">
+                        <h3><i class="fas fa-power-off"></i> Duty Status</h3>
+                        <div class="duty-toggle">
+                            <div class="status-display" id="current-status">
+                                <div class="status-indicator offline" id="status-indicator">OFFLINE</div>
+                                <small id="status-time">Last updated: Never</small>
+                            </div>
+                            <div class="toggle-buttons">
+                                <button class="btn btn-online" onclick="goOnDuty()" id="online-btn">
+                                    <i class="fas fa-play"></i> Go Online
+                                </button>
+                                <button class="btn btn-offline" onclick="goOffDuty()" id="offline-btn" disabled>
+                                    <i class="fas fa-stop"></i> Go Offline
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Ambulance Info -->
+
+
+                    <!-- Quick Actions -->
+                    <div class="quick-actions-card">
+                        <h3><i class="fas fa-bolt"></i> Quick Actions</h3>
+                        <div class="action-buttons">
+                            <button class="btn btn-info" onclick="contactDispatch()">
+                                <i class="fas fa-phone"></i>
+                                Contact Dispatch
+                            </button>
+                        </div>
+                    </div>
+
+                    
+                </div>
+
+                <!-- Main Content Area -->
+                <div class="main-content">
+                    <!-- Dashboard Tabs -->
+                    <div class="tab-navigation">
+                        <button class="tab-btn active" onclick="showTab('emergency-calls')">
+                            <i class="fa-solid fa-list-check"></i> Tasks
+                        </button>
+                        <button class="tab-btn" onclick="showTab('live-map')">
+                            <i class="fas fa-map"></i> Live Map
+                        </button>
+                    </div>
+
+                    <!-- Emergency Calls Tab -->
+                    <div id="emergency-calls" class="tab-content active">
+                        <div class="calls-header">
+                            <h3><i class="fa-solid fa-list-check"></i>Tasks</h3>
+                        </div>
+
+                        <div class="emergency-calls-list">
+                            <!-- High Priority Call -->
+                            <div class="call-card priority-critical">
+                                <div class="call-header">
+                                    <div class="call-id">
+                                        <span class="id-badge">Task -001</span>
+                                        <span class="priority-badge critical">CRITICAL</span>
+                                    </div>
+                                    <div class="call-time">
+                                        <i class="fas fa-clock"></i>
+                                        <span>2 min ago</span>
+                                    </div>
+                                </div>
+                                <div class="call-details">
+                                    <div class="location">
+                                        <i class="fas fa-map-marker-alt"></i>
+                                        <span>123 Main Street, Downtown</span>
+                                    </div>
+                                    <div class="condition">
+                                        <i class="fas fa-heartbeat"></i>
+                                        <span>Cardiac Arrest - 68 yr old male</span>
+                                    </div>
+                                    <div class="caller">
+                                        <i class="fas fa-user"></i>
+                                        <span>Caller: Spouse - 555-0123</span>
+                                    </div>
+                                    <div class="distance">
+                                        <i class="fas fa-route"></i>
+                                        <span>Distance: 2.3 km | ETA: 4 minutes</span>
+                                    </div>
+                                </div>
+                                <div class="call-actions">
+                                    
+                                    <button class="btn btn-route" onclick="getDirections('CALL-001')">
+                                        <i class="fas fa-directions"></i> Get Directions
+                                    </button>
+                                    <button class="btn btn-contact" onclick="contactCaller('CALL-001')">
+                                        <i class="fas fa-phone"></i> Contact Caller
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Live Map Tab -->
+                    <div id="live-map" class="tab-content">
+                        <div class="map-container">
+                            <h3><i class="fas fa-map"></i> Live Navigation & Tracking</h3>
+                            <div class="map-placeholder">
+                                <div class="map-content">
+                                    <i class="fas fa-map" style="font-size: 4rem; color: #3b82f6; margin-bottom: 1rem;"></i>
+                                    <h4>Live GPS Tracking</h4>
+                                    <p>Real-time ambulance location and navigation</p>
+                                    <div class="coordinates">
+                                        <span>Current Location: 40.7128° N, 74.0060° W</span>
+                                    </div>
+                                    <div class="map-stats">
+                                        <div class="map-stat">
+                                            <span class="stat-label">Speed:</span>
+                                            <span class="stat-value">45 km/h</span>
+                                        </div>
+                                        <div class="map-stat">
+                                            <span class="stat-label">Heading:</span>
+                                            <span class="stat-value">Northeast</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                                       
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Status Update Modal -->
+    <div id="status-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close" onclick="closeStatusModal()">&times;</span>
+            <h3>Update Call Status</h3>
+            <form id="status-form">
+                <div class="form-group">
+                    <label for="call-status">Status:</label>
+                    <select id="call-status">
+                        <option value="responding">Responding</option>
+                        <option value="on-scene">On Scene</option>
+                        <option value="transporting">Transporting</option>
+                        <option value="at-hospital">At Hospital</option>
+                        <option value="available">Available</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="status-notes">Notes:</label>
+                    <textarea id="status-notes" rows="3"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Update Status</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Global state management
+        let ambulanceState = {
+            isOnDuty: false,
+            currentCall: null,
+            location: { lat: 40.7128, lng: -74.0060 },
+            onlineTime: 0,
+            callsToday: 0,
+            dutyStartTime: null
+        };
+
+        let onlineTimeInterval;
+
+        // Duty Status Management
+        function goOnDuty() {
+            ambulanceState.isOnDuty = true;
+            ambulanceState.dutyStartTime = new Date();
+            
+            updateDutyDisplay();
+            startOnlineTimer();
+            
+            document.getElementById('online-btn').disabled = true;
+            document.getElementById('offline-btn').disabled = false;
+            
+            showNotification('You are now ON DUTY', 'success');
+            updateLocationDisplay();
+        }
+
+        function goOffDuty() {
+            if (ambulanceState.currentCall) {
+                if (!confirm('You have an active call. Are you sure you want to go off duty?')) {
+                    return;
+                }
+            }
+            
+            ambulanceState.isOnDuty = false;
+            ambulanceState.dutyStartTime = null;
+            
+            updateDutyDisplay();
+            stopOnlineTimer();
+            
+            document.getElementById('online-btn').disabled = false;
+            document.getElementById('offline-btn').disabled = true;
+            
+            showNotification('You are now OFF DUTY', 'warning');
+        }
+
+        function updateDutyDisplay() {
+            const indicator = document.getElementById('status-indicator');
+            const timeElement = document.getElementById('status-time');
+            
+            if (ambulanceState.isOnDuty) {
+                indicator.textContent = 'ONLINE';
+                indicator.className = 'status-indicator online';
+                timeElement.textContent = `Online since: ${new Date().toLocaleTimeString()}`;
+            } else {
+                indicator.textContent = 'OFFLINE';
+                indicator.className = 'status-indicator offline';
+                timeElement.textContent = `Last updated: ${new Date().toLocaleTimeString()}`;
+            }
+        }
+
+        function startOnlineTimer() {
+            onlineTimeInterval = setInterval(() => {
+                if (ambulanceState.dutyStartTime) {
+                    const now = new Date();
+                    const diff = now - ambulanceState.dutyStartTime;
+                    const hours = Math.floor(diff / (1000 * 60 * 60));
+                    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                    const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+                    
+                    document.getElementById('online-duration').textContent = 
+                        `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                }
+            }, 1000);
+        }
+
+        function stopOnlineTimer() {
+            if (onlineTimeInterval) {
+                clearInterval(onlineTimeInterval);
+                onlineTimeInterval = null;
+            }
+        }
+
+        // Tab Management
+        function showTab(tabName) {
+            // Hide all tab contents
+            const tabContents = document.querySelectorAll('.tab-content');
+            tabContents.forEach(content => content.classList.remove('active'));
+            
+            // Remove active class from all tab buttons
+            const tabBtns = document.querySelectorAll('.tab-btn');
+            tabBtns.forEach(btn => btn.classList.remove('active'));
+            
+            // Show selected tab and mark button as active
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // Emergency Call Management
+        function acceptCall(callId) {
+            if (!ambulanceState.isOnDuty) {
+                showNotification('Please go online before accepting calls', 'warning');
+                return;
+            }
+            
+            ambulanceState.currentCall = callId;
+            ambulanceState.callsToday++;
+            
+            document.getElementById('calls-count').textContent = ambulanceState.callsToday;
+            
+            showNotification(`Call ${callId} accepted. Proceeding to location.`, 'success');
+            
+            // Update call card to show as active
+            const callCard = document.querySelector(`[data-call-id="${callId}"]`);
+            if (callCard) {
+                callCard.classList.add('active-call');
+            }
+            
+            // Simulate status updates
+            setTimeout(() => {
+                showNotification('GPS navigation started', 'info');
+            }, 2000);
+        }
+
+        function getDirections(callId) {
+            showNotification('Opening GPS navigation...', 'info');
+            showTab('live-map');
+        }
+
+        function contactCaller(callId) {
+            showNotification(`Connecting to caller for ${callId}...`, 'info');
+        }
+
+        function updateCallStatus(callId) {
+            document.getElementById('status-modal').style.display = 'block';
+        }
+
+        function completeCall(callId) {
+            if (confirm('Mark this call as completed?')) {
+                ambulanceState.currentCall = null;
+                showNotification(`Call ${callId} marked as completed`, 'success');
+                
+                // Update stats
+                ambulanceState.callsToday++;
+                document.getElementById('calls-count').textContent = ambulanceState.callsToday;
+            }
+        }
+
+        function contactHospital(callId) {
+            showNotification(`Contacting hospital for ${callId}...`, 'info');
+        }
+
+        // Quick Actions
+        function triggerPanicButton() {
+            if (confirm('This will send an emergency alert to dispatch. Continue?')) {
+                showNotification('EMERGENCY ALERT SENT TO DISPATCH', 'emergency');
+                
+                // Simulate emergency protocol activation
+                setTimeout(() => {
+                    showNotification('Backup units dispatched to your location', 'info');
+                }, 3000);
+            }
+        }
+
+        function requestTrafficClearance() {
+            if (!ambulanceState.currentCall) {
+                showNotification('No active call. Traffic clearance not needed.', 'warning');
+                return;
+            }
+            
+            showNotification('Traffic clearance request sent to traffic control', 'success');
+            
+            setTimeout(() => {
+                showNotification('Traffic signals optimized for your route', 'info');
+            }, 5000);
+        }
+
+        function updateLocation() {
+            showNotification('Updating GPS location...', 'info');
+            
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    function(position) {
+                        ambulanceState.location = {
+                            lat: position.coords.latitude,
+                            lng: position.coords.longitude
+                        };
+                        showNotification('Location updated successfully', 'success');
+                        updateLocationDisplay();
+                    },
+                    function(error) {
+                        showNotification('Failed to get location', 'error');
+                    }
+                );
+            } else {
+                showNotification('Geolocation not supported', 'error');
+            }
+        }
+
+        function contactDispatch() {
+            showNotification('Connecting to dispatch center...', 'info');
+        }
+
+        function updateLocationDisplay() {
+            const locationElement = document.getElementById('current-location');
+            if (ambulanceState.isOnDuty) {
+                locationElement.textContent = `${ambulanceState.location.lat.toFixed(4)}, ${ambulanceState.location.lng.toFixed(4)}`;
+            } else {
+                locationElement.textContent = 'Station 1';
+            }
+        }
+
+        // Map Functions
+        function centerOnAmbulance() {
+            showNotification('Centering map on vehicle location', 'info');
+        }
+
+        function showTrafficLayer() {
+            showNotification('Traffic layer enabled', 'info');
+        }
+
+        function showHospitals() {
+            showNotification('Showing nearby hospitals', 'info');
+        }
+
+        // Patient Management
+        function addNewPatient() {
+            showNotification('Opening patient registration form...', 'info');
+        }
+
+        function updateVitals(patientId) {
+            showNotification(`Opening vitals form for ${patientId}`, 'info');
+        }
+
+        function contactFamily(patientId) {
+            showNotification(`Contacting family for ${patientId}`, 'info');
+        }
+
+        // Modal Management
+        function closeStatusModal() {
+            document.getElementById('status-modal').style.display = 'none';
+        }
+
+        // Utility Functions
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.innerHTML = `
+                <i class="fas fa-${getNotificationIcon(type)}"></i>
+                <span>${message}</span>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 5000);
+        }
+
+        function getNotificationIcon(type) {
+            const icons = {
+                success: 'check-circle',
+                error: 'exclamation-circle',
+                warning: 'exclamation-triangle',
+                info: 'info-circle',
+                emergency: 'exclamation-triangle'
+            };
+            return icons[type] || 'info-circle';
+        }
+
+        function logout() {
+            if (ambulanceState.currentCall) {
+                alert('Cannot logout while on an active call.');
+                return;
+            }
+            
+            if (confirm('Are you sure you want to logout?')) {
+                if (ambulanceState.isOnDuty) {
+                    goOffDuty();
+                }
+                setTimeout(() => {
+                    window.location.href = 'login.html';
+                }, 1000);
+            }
+        }
+
+        // Initialize Dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            showNotification('Ambulance dashboard loaded successfully', 'success');
+            
+            // Auto-update location every 30 seconds when on duty
+            setInterval(() => {
+                if (ambulanceState.isOnDuty) {
+                    updateLocation();
+                }
+            }, 30000);
+        });
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('status-modal');
+            if (event.target === modal) {
+                closeStatusModal();
+            }
+        }
+    </script>
+
+</body>
+</html>
